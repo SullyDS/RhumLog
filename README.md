@@ -2,6 +2,10 @@
 
 RhumLog est un projet personnel que j'ai fait évoluer d'une simple application de gestion de cave vers un **Data Product complet** : modélisation métier, analytics, qualité des données, Machine Learning explicable, Model Card et démonstration publique en lecture seule. Le lien est :https://rhumlog-portfolio.streamlit.app/
 
+<img width="1610" height="1232" alt="image" src="https://github.com/user-attachments/assets/8d276e5e-cddb-4620-a56a-47db60898e6e" />
+<img width="2514" height="1296" alt="image" src="https://github.com/user-attachments/assets/5973eb61-0b40-4fef-a5a3-3397701031fa" />
+
+
 > **Question Data Science :** peut-on estimer mon appréciation d'un rhum avant dégustation en utilisant uniquement des informations disponibles à t0 ?
 
 ## En un coup d'œil
