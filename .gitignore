@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Secrets
+.env
+.streamlit/secrets.toml
+
+# Persistent personal database: never commit it to the public portfolio repo
+data/*.sqlite
+data/*.sqlite3
+data/*.db
+!data/.gitkeep
+
+# Exports / private migrations
+private_exports/
+*.sql
+
+# OS
+.DS_Store
