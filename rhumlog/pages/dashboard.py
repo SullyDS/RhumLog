@@ -117,20 +117,23 @@ def _cave_dynamics_chart(
         secondary_y=False,
     )
     fig.update_layout(
-        title="Valeur de la cave & entrées documentées",
         barmode="stack",
         bargap=0.38,
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        legend=dict(
+            orientation="h", x=0.5, xanchor="center", y=-0.22,
+            yanchor="top", font=dict(size=10),
+        ),
+        margin=dict(l=12, r=12, t=20, b=90),
     )
     fig.update_xaxes(dtick=1, title=None)
     fig.update_yaxes(
-        title_text="Valeur d'achat (€)",
+        title_text=None,
         ticksuffix=" €",
         rangemode="tozero",
         secondary_y=False,
     )
     fig.update_yaxes(
-        title_text="Entrées en cave",
+        title_text=None,
         rangemode="tozero",
         dtick=1,
         secondary_y=True,
@@ -199,10 +202,22 @@ def _price_pleasure_chart(frame: pd.DataFrame, price_threshold: float | None, sc
             "type": False,
         },
         labels={"price": "Prix (€)", "avg_score": "Note moyenne", "type": "Type"},
-        title="Plaisir en fonction du prix",
+        title=None,
     )
     fig.update_traces(marker=dict(size=10, opacity=.86, line=dict(width=1, color="rgba(255,255,255,.18)")))
-    fig.update_yaxes(range=[0, 10])
+    fig.update_yaxes(range=[0, 10], title_text="Note /10")
+    fig.update_layout(
+        showlegend=True,
+        legend=dict(
+            orientation="h",
+            x=0.5,
+            xanchor="center",
+            y=-0.28,
+            yanchor="top",
+            title_text="",
+            font=dict(size=10),
+        ),
+    )
     if price_threshold is not None and score_threshold is not None:
         fig.add_vline(x=price_threshold, line_dash="dot", line_color="rgba(148,163,184,.55)")
         fig.add_hline(y=score_threshold, line_dash="dot", line_color="rgba(148,163,184,.55)")
@@ -216,30 +231,6 @@ def _price_pleasure_chart(frame: pd.DataFrame, price_threshold: float | None, sc
             line=dict(width=0),
             layer="below",
         )
-        fig.add_annotation(
-            x=price_threshold * 0.50,
-            y=min(9.7, score_threshold + .45),
-            text="Sweet spot exploratoire",
-            showarrow=False,
-            font=dict(color=SUCCESS, size=11),
-        )
-
-        sweet = frame[
-            (frame["price"] <= price_threshold)
-            & (frame["avg_score"] >= score_threshold)
-        ].sort_values(["avg_score", "price"], ascending=[False, True])
-        for _, row in sweet.head(3).iterrows():
-            fig.add_annotation(
-                x=float(row["price"]),
-                y=float(row["avg_score"]),
-                text=str(row["rum_name"]),
-                showarrow=True,
-                arrowhead=0,
-                ax=16,
-                ay=-20,
-                font=dict(size=9),
-                opacity=.86,
-            )
     return fig
 
 
@@ -285,6 +276,7 @@ def render(service: RumService) -> None:
                 )
 
             else:
+                st.markdown("#### Valeur de la cave & entrées documentées")
                 _plot(
                     _cave_dynamics_chart(
                         snapshot.cave_value_timeline,
@@ -341,16 +333,18 @@ def render(service: RumService) -> None:
             if snapshot.price_pleasure.empty:
                 st.info("Pas assez de couples prix / dégustation.")
             else:
+                st.markdown("#### Plaisir en fonction du prix")
                 _plot(
                     _price_pleasure_chart(
                         snapshot.price_pleasure,
                         snapshot.sweet_spot_price_threshold,
                         snapshot.sweet_spot_score_threshold,
                     ),
-                    height=420,
+                    height=470,
                     showlegend=True,
                 )
                 st.caption(
+                    "Touchez un point pour voir le rhum et son type. "
                     "Sweet spot exploratoire : score ≥ Q3 global et prix ≤ médiane des rhums dégustés avec prix. "
                     "Cette règle descriptive est identique à celle de la page Analytics."
                 )
