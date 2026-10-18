@@ -562,7 +562,7 @@ def _render_price_pleasure(snapshot) -> None:
             "tasting_count": "Dégustations",
             "type": "Type",
         },
-        title="Chaque point représente un rhum dégusté",
+        title=None,
     )
 
     x_max = max(float(pairs["price"].max()) * 1.05, median_price + 1)
@@ -595,30 +595,21 @@ def _render_price_pleasure(snapshot) -> None:
     )
     fig.update_xaxes(range=[0, x_max])
     fig.update_yaxes(range=[0, 10])
+    fig.update_layout(showlegend=False, margin=dict(l=8, r=8, t=12, b=42))
 
     if score_threshold is not None:
         sweet = pairs[
             (pairs["price"] <= median_price)
             & (pairs["avg_score"] >= score_threshold)
         ].sort_values(["avg_score", "price"], ascending=[False, True])
-        for _, row in sweet.head(4).iterrows():
-            fig.add_annotation(
-                x=float(row["price"]),
-                y=float(row["avg_score"]),
-                text=str(row["rum_name"]),
-                showarrow=True,
-                arrowhead=0,
-                ax=18,
-                ay=-22,
-                font=dict(size=10),
-                opacity=0.88,
-            )
     else:
         sweet = pairs.iloc[0:0].copy()
 
+    st.markdown("#### Prix et note moyenne par rhum")
     _chart(fig)
 
     st.caption(
+        "Touchez un point pour identifier le rhum et son type. "
         "Sweet spot exploratoire = prix ≤ médiane et score ≥ Q3 global. "
         "La même définition est utilisée sur le Dashboard afin d'éviter deux lectures contradictoires."
     )
@@ -862,7 +853,7 @@ def _render_taste_profile(snapshot) -> None:
                 "type": "Type",
                 "tasting_count": "Dégustations",
             },
-            title="Chaque point représente un rhum dégusté",
+            title=None,
         )
         fig.add_hline(
             y=float(abv_pairs["avg_score"].mean()),
